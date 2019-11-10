@@ -7,7 +7,7 @@ class Inventory(models.Model):
     AUXILIARY_MEANS = 'AM'
     OTHER = 'OT'
     TYPE_CHOICES = [(WORK_CLOTHES, 'work clothes'), (TOOL, 'tools'), (AUXILIARY_MEANS, 'auxiliary means'), (OTHER, 'other')]
-    type = models.CharField(max_length=2, choices=TYPE_CHOICES, default=OTHER)
+    type = models.CharField(max_length=2, choices=TYPE_CHOICES, default=OTHER, unique=True)
 
     def __str__(self):
         return dict(self.TYPE_CHOICES)[self.type]

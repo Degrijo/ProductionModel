@@ -1,7 +1,7 @@
 from django.urls import path
 
 from core.views import StockFormView, InventoryFormView, WaybillFormView, InventoryListView, WaybillListView, StockListView
-  # +375293927000
+
 
 urlpatterns = [
     path('stock_form/', StockFormView.as_view(), name='stock_form'),
