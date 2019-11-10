@@ -1,7 +1,6 @@
 {% extends 'core/wrapper.html' %}
 
 {% block content %}
-    <h4>{{ header }}</h4>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

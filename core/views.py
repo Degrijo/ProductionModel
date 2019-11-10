@@ -1,4 +1,4 @@
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 
@@ -13,7 +13,7 @@ from core.models import Inventory, Waybill, Stock
 - Просмотр списка всех складов, отсортированных по названию на текущую дату.'''
 
 
-class StockFormView(CreateView):
+class CreateStockView(CreateView):
     template_name = 'core/formview.html'
     success_url = reverse_lazy('stock_form')
     model = Stock
@@ -22,26 +22,26 @@ class StockFormView(CreateView):
     def get_context_data(self):
         context = super().get_context_data()
         context['title'] = 'stock form'
-        context['header'] = "Let's work with stock form"
+        context['header'] = "Create Stock"
         context['submit'] = "stock"
         return context
 
 
-class InventoryFormView(CreateView):
+class CreateInventoryView(CreateView):
     template_name = 'core/formview.html'
-    success_url = reverse_lazy('inventory_fo0rm')
+    success_url = reverse_lazy('inventory_form')
     model = Inventory
     fields = '__all__'
 
     def get_context_data(self):
         context = super().get_context_data()
         context['title'] = 'inventory form'
-        context['header'] = "Let's work with inventory form"
+        context['header'] = "Create Inventory"
         context['submit'] = "inventory"
         return context
 
 
-class WaybillFormView(CreateView):
+class CreateWaybillView(CreateView):
     template_name = 'core/formview.html'
     success_url = reverse_lazy('waybill_form')
     model = Waybill
@@ -50,7 +50,7 @@ class WaybillFormView(CreateView):
     def get_context_data(self):
         context = super().get_context_data()
         context['title'] = 'waybill form'
-        context['header'] = "Let's work with waybill form"
+        context['header'] = "Create Waybill"
         context['submit'] = "waybill"
         return context
 
@@ -58,34 +58,115 @@ class WaybillFormView(CreateView):
 class InventoryListView(ListView):
     template_name = 'core/listview.html'
     model = Inventory
-    success_url = reverse_lazy('inventory_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['title'] = 'inventory list'
-        context['header'] = "Let's see list of inventories"
+        context['header'] = "Inventory List"
         return context
 
 
 class WaybillListView(ListView):
     template_name = 'core/listview.html'
     model = Waybill
-    success_url = reverse_lazy('waybill_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['title'] = 'waybill list'
-        context['header'] = "Let's see list of waybills"
+        context['title'] = 'Waybill List'
+        context['header'] = "Waybill List"
         return context
 
 
 class StockListView(ListView):
     template_name = 'core/listview.html'
     model = Stock
-    success_url = reverse_lazy('stock_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['title'] = 'stock list'
-        context['header'] = "Let's see list of stocks"
+        context['header'] = "Stock List"
+        return context
+
+
+class UpdateStockView(UpdateView):
+    template_name = 'core/formview.html'
+    success_url = reverse_lazy('stock_form')
+    model = Stock
+    fields = '__all__'
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['title'] = 'stock form'
+        context['header'] = "Update Stock"
+        context['submit'] = "stock"
+        return context
+
+
+class UpdateInventoryView(UpdateView):
+    template_name = 'core/formview.html'
+    success_url = reverse_lazy('inventory_form')
+    model = Inventory
+    fields = '__all__'
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['title'] = 'inventory form'
+        context['header'] = "Update Inventory"
+        context['submit'] = "inventory"
+        return context
+
+
+class UpdateWaybillView(UpdateView):
+    template_name = 'core/formview.html'
+    success_url = reverse_lazy('waybill_form')
+    model = Waybill
+    exclude = ('created_at',)
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['title'] = 'waybill form'
+        context['header'] = "Update Waybill"
+        context['submit'] = "waybill"
+        return context
+
+
+class DeleteStockView(DeleteView):
+    template_name = 'core/formview.html'
+    success_url = reverse_lazy('stock_form')
+    model = Stock
+    fields = '__all__'
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['title'] = 'stock form'
+        context['header'] = "Delete Stock"
+        context['submit'] = "stock"
+        return context
+
+
+class DeleteInventoryView(DeleteView):
+    template_name = 'core/formview.html'
+    success_url = reverse_lazy('inventory_form')
+    model = Inventory
+    fields = '__all__'
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['title'] = 'inventory form'
+        context['header'] = "Delete Inventory"
+        context['submit'] = "inventory"
+        return context
+
+
+class DeleteWaybillView(DeleteView):
+    template_name = 'core/formview.html'
+    success_url = reverse_lazy('waybill_form')
+    model = Waybill
+    exclude = ('created_at',)
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['title'] = 'waybill form'
+        context['header'] = "Delete Waybill"
+        context['submit'] = "waybill"
         return context
