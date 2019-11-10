@@ -1,5 +1,5 @@
 from django import forms
-from core.models import Stock
+from core.models import Stock, Inventory, Waybill
 
 
 '''- Добавление/редактирование/удаление информации о рабочем инвентаре.
@@ -15,3 +15,15 @@ class StockForm(forms.ModelForm):
     class Meta:
         model = Stock
         fields = '__all__'
+
+
+class InventoryForm(forms.ModelForm):
+    class Meta:
+        model = Inventory
+        fields = '__all__'
+
+
+class WaybillForm(forms.ModelForm):
+    class Meta:
+        model = Waybill
+        exclude = ('created_at',)
