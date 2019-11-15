@@ -1,0 +1,47 @@
+{% extends 'core/wrapper.html' %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_employee_name">Employee name</label>
+            <input type="text" class="form-control" id="id_employee_name" placeholder="Enter employee name" maxlength=200>
+<!--            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
+        </div>
+        <div class="form-group">
+            <label for="id_employee_position">Employee position</label>
+            <input type="text" class="form-control" id="id_employee_position" placeholder="Enter employee position" maxlength=50>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="in" checked>
+          <label class="form-check-label" for="exampleRadios1">
+            Incoming
+          </label>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="out">
+          <label class="form-check-label" for="exampleRadios2">
+            Outcoming
+          </label>
+        </div>
+            {% for i in inventories %}
+                <div class="form-row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-check-label">{{ i }}</label>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <input type="number" class="form-control" id="inventory_{{ i }}" placeholder="Number" value=0 required>
+    <!--                        <div class="invalid-feedback">-->
+    <!--                            Please provide a valid zip.-->
+    <!--                        </div>-->
+                    </div>
+                </div>
+            {% endfor %}
+        <button type="submit" class="btn btn-success mt-3">Create Waybill</button>
+    </form>
+{% endblock %}
+
+    inventories = models.ManyToManyField(Inventory, 'waybills', through='InventoryWaybill')
+    employee_name = models.CharField(max_length=200)
+    employee_position = models.CharField(max_length=50)
+    incoming

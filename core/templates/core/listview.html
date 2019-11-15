@@ -4,9 +4,11 @@
     <ul>
         {% for obj in object_list %}
             <li>
-                {{ obj }}
-                <a class="btn" href="{% url 'update_url' obj.id %}">Update {{ submit }}</a>
-                <a class="btn" href="{% url 'delete_url' obj.id %}">Delete {{ submit }}</a>
+                <div class="container-fluid mb-5 mt-5">
+                    {{ obj }}
+                    <button class="update" onclick="window.location.href='/core/update_{{ submit }}/{{ obj.id }}'">Update {{ submit }}</button>
+                    <button class="delete" onclick="window.location.href='/core/delete_{{ submit }}/{{ obj.id }}'">Delete {{ submit }}</button>
+                </div>
             </li>
         {% endfor %}
     </ul>

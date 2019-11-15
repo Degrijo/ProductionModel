@@ -7,10 +7,11 @@ class Inventory(models.Model):
     AUXILIARY_MEANS = 'AM'
     OTHER = 'OT'
     TYPE_CHOICES = [(WORK_CLOTHES, 'work clothes'), (TOOL, 'tools'), (AUXILIARY_MEANS, 'auxiliary means'), (OTHER, 'other')]
-    type = models.CharField(max_length=2, choices=TYPE_CHOICES, default=OTHER, unique=True)
+    type = models.CharField(max_length=2, choices=TYPE_CHOICES, default=OTHER)
+    name = models.CharField(max_length=200)
 
     def __str__(self):
-        return dict(self.TYPE_CHOICES)[self.type]
+        return self.name + ' ' + dict(self.TYPE_CHOICES)[self.type]
 
 
 class Stock(models.Model):
@@ -31,6 +32,6 @@ class Waybill(models.Model):
 
 
 class InventoryWaybill(models.Model):
-    inventory = models.ForeignKey(Inventory, models.CASCADE)
-    waybill = models.ForeignKey(Waybill, models.CASCADE)
+    inventory = models.ForeignKey(Inventory, models.CASCADE, 'inventory_waybill')
+    waybill = models.ForeignKey(Waybill, models.CASCADE, 'inventory_waybill')
     inventory_number = models.PositiveIntegerField()
