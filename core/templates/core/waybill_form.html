@@ -5,21 +5,21 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="id_employee_name">Employee name</label>
-            <input type="text" class="form-control" id="id_employee_name" placeholder="Enter employee name" maxlength=200>
+            <input type="text" class="form-control" id="id_employee_name" name="employee_name" placeholder="Enter employee name" maxlength=200>
 <!--            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
         </div>
         <div class="form-group">
             <label for="id_employee_position">Employee position</label>
-            <input type="text" class="form-control" id="id_employee_position" placeholder="Enter employee position" maxlength=50>
+            <input type="text" class="form-control" id="id_employee_position" name="employee_position" placeholder="Enter employee position" maxlength=50>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="in" checked>
+          <input class="form-check-input" type="radio" name="incoming" id="exampleRadios1" value=true checked>
           <label class="form-check-label" for="exampleRadios1">
             Incoming
           </label>
         </div>
         <div class="form-check mb-3">
-          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="out">
+          <input class="form-check-input" type="radio" name="incoming" id="exampleRadios2" value=false>
           <label class="form-check-label" for="exampleRadios2">
             Outcoming
           </label>
@@ -30,7 +30,7 @@
                         <label class="form-check-label">{{ i }}</label>
                     </div>
                     <div class="col-md-2 mb-3">
-                        <input type="number" class="form-control" id="inventory_{{ i }}" placeholder="Number" value=0 required>
+                        <input type="number" class="form-control" id="id_inventory_{{ i.id }}" name="inventory_{{ i.id }}" placeholder="Number" value=0 required>
     <!--                        <div class="invalid-feedback">-->
     <!--                            Please provide a valid zip.-->
     <!--                        </div>-->

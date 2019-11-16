@@ -1,10 +1,12 @@
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpRequest
 
-from core.models import Inventory, Waybill, Stock
+import re
+
+from core.models import Inventory, Waybill, Stock, InventoryWaybillStock
 
 
 class CreateStockView(CreateView):
@@ -37,22 +39,32 @@ class CreateWaybillView(CreateView):
     template_name = 'core/waybill_form.html'
     success_url = reverse_lazy('waybill_list')
     model = Waybill
-    fields = ('employee_name', 'employee_position')
+    fields = ('employee_name', 'employee_position', 'incoming')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['title'] = 'create waybill'
         context['header'] = "Create Waybill"
-        context['inventories'] = Inventory.objects.all()
+        context['inventories'] = Inventory.objects.all()#.annotate(number=)
         return context
 
-    def form_valid(self, form):
-        print('valid', form)
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        print('invalid', form.errors)
-        return super().form_invalid(form)
+    def post(self, request, *args, **kwargs):
+        waybill_data = {key: value for key, value in request.POST.items() if key in ['employee_name',
+                                                                                     'employee_position',
+                                                                                     'incoming']}
+        waybill_form = self.form_class()(waybill_data)
+        if waybill_form.is_valid():
+            waybill = waybill_form.save()
+        else:
+            return self.form_invalid(waybill_form)
+        for key, value in request.POST.items():
+            if re.match(r'inventory_\d+', key):
+                inventory = get_object_or_404(Inventory, int(re.compile(r'\d+$').search(key).group(0)))
+                if int(value):
+                    InventoryWaybillStock.objects.create(inventory=inventory, waybill=waybill, number=value)
+            else:
+                return self.form_invalid(waybill_form)
+        return self.form_valid(waybill_form)
 
 
 class InventoryListView(ListView):

@@ -17,7 +17,7 @@ class Inventory(models.Model):
 class Stock(models.Model):
     name = models.CharField(max_length=120)
     phone_number = models.CharField(max_length=15)
-    inventories = models.ManyToManyField(Inventory, 'stocks')
+    inventories = models.ManyToManyField(Inventory, 'stocks', through='InventoryWaybillStock')
 
     def __str__(self):
         return self.name
@@ -25,13 +25,14 @@ class Stock(models.Model):
 
 class Waybill(models.Model):
     created_at = models.DateTimeField(auto_now=True)
-    inventories = models.ManyToManyField(Inventory, 'waybills', through='InventoryWaybill')
+    inventories = models.ManyToManyField(Inventory, 'waybills', through='InventoryWaybillStock')
     employee_name = models.CharField(max_length=200)
     employee_position = models.CharField(max_length=50)
     incoming = models.BooleanField(blank=False, null=False)
 
 
-class InventoryWaybill(models.Model):
+class InventoryWaybillStock(models.Model):
     inventory = models.ForeignKey(Inventory, models.CASCADE, 'inventory_waybill')
     waybill = models.ForeignKey(Waybill, models.CASCADE, 'inventory_waybill')
+    stock = models.ForeignKey(Stock, models.CASCADE, 'inventory_waybill')
     inventory_number = models.PositiveIntegerField()
