@@ -4,10 +4,17 @@
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label for="exampleInputEmail1">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            <label for="id_name">Name</label>
+            <input type="text" class="form-control" id="id_name" name="name" placeholder="Enter name" maxlength=200>
         </div>
-        <input type="submit" value="Create {{ submit }}">
+        <div class="form-group">
+            <label for="id_type">Type</label>
+            <select class="form-control" id="id_type" name="type">
+                {% for item in form.type %}
+                    {{ item }}
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success mt-3">Create Inventory</button>
     </form>
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'core/wrapper.html' %}
+
+{% block content %}
+    <ul>
+        {% if object_list|length == 0 %}Empty Set{% endif %}
+        {% for obj in object_list %}
+            <li>
+                <div class="form-row">
+                    <div class="col-md-4 mb-3 align-self-center">
+                        {{ obj }}
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <button type="button" class="btn btn-primary mt-3" onclick="window.location.href='/core/stock_{{ obj.id }}/inventories'">Inventories</button>
+                        <button type="button" class="btn btn-primary mt-3" onclick="window.location.href='/core/stock_{{ obj.id }}/waybills'">Waybills</button>
+                        <button type="button" class="btn btn-warning mt-3" onclick="window.location.href='/core/update_stock/{{ obj.id }}'">Update {{ submit }}</button>
+                        <button type="button" class="btn btn-danger mt-3" onclick="window.location.href='/core/delete_stock/{{ obj.id }}'">Delete {{ submit }}</button>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

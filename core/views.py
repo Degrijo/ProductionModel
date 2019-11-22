@@ -2,7 +2,6 @@ from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
-from django.http import HttpRequest
 
 import re
 
@@ -13,7 +12,7 @@ class CreateStockView(CreateView):
     template_name = 'core/stock_form.html'
     success_url = reverse_lazy('stock_list')
     model = Stock
-    fields = '__all__'
+    fields = ('name', 'phone_number')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -45,10 +44,14 @@ class CreateWaybillView(CreateView):
         context = super().get_context_data()
         context['title'] = 'create waybill'
         context['header'] = "Create Waybill"
-        context['inventories'] = Inventory.objects.all()#.annotate(number=)
+        context['inventories'] = Inventory.objects.all()
+        print(self.kwargs['pk'])
+        print(Inventory.objects.first().number(1))
+        context['numbers'] = {item.id: item.number(self.kwargs['pk']) for item in context['inventories']}
         return context
 
     def post(self, request, *args, **kwargs):
+        stock = self.kwargs['pk']
         waybill_data = {key: value for key, value in request.POST.items() if key in ['employee_name',
                                                                                      'employee_position',
                                                                                      'incoming']}
@@ -61,7 +64,7 @@ class CreateWaybillView(CreateView):
             if re.match(r'inventory_\d+', key):
                 inventory = get_object_or_404(Inventory, int(re.compile(r'\d+$').search(key).group(0)))
                 if int(value):
-                    InventoryWaybillStock.objects.create(inventory=inventory, waybill=waybill, number=value)
+                    InventoryWaybillStock.objects.create(inventory=inventory, waybill=waybill, store=stock, number=value)
             else:
                 return self.form_invalid(waybill_form)
         return self.form_valid(waybill_form)
@@ -105,6 +108,9 @@ class StockListView(ListView):
         context['update_url'] = reverse_lazy('update_stock')
         return context
 
+    class Meta:
+        ordering = ['-name']
+
 
 class UpdateStockView(UpdateView):
     template_name = 'core/stock_form.html'
@@ -145,6 +151,23 @@ class UpdateWaybillView(UpdateView):
         context['title'] = 'update waybill'
         context['header'] = "Update Waybill"
         context['delete_url'] = reverse_lazy('delete_stock')
+        return context
+
+
+class StockInventoriesListView(ListView):
+    template_name = 'core/inventory_list.html'
+    model = Inventory
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(stocks__id=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['title'] = 'inventory list'
+        context['header'] = "Inventory List"
+        context['delete_url'] = reverse_lazy('delete_inventory')
+        context['update_url'] = reverse_lazy('update_inventory')
         return context
 
 

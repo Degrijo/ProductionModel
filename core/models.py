@@ -13,6 +13,10 @@ class Inventory(models.Model):
     def __str__(self):
         return self.name + ' ' + dict(self.TYPE_CHOICES)[self.type]
 
+    def number(self, stock_id):
+        queryset = InventoryWaybillStock.objects.filter(stock__id=stock_id, inventory__id=self.id).values_list('number', 'waybill__incoming')
+        return sum([x if y else -x for x, y in queryset])
+
 
 class Stock(models.Model):
     name = models.CharField(max_length=120)
@@ -25,14 +29,14 @@ class Stock(models.Model):
 
 class Waybill(models.Model):
     created_at = models.DateTimeField(auto_now=True)
-    inventories = models.ManyToManyField(Inventory, 'waybills', through='InventoryWaybillStock')
     employee_name = models.CharField(max_length=200)
     employee_position = models.CharField(max_length=50)
     incoming = models.BooleanField(blank=False, null=False)
+    inventories = models.ManyToManyField(Inventory, 'waybills', through='InventoryWaybillStock')
 
 
 class InventoryWaybillStock(models.Model):
-    inventory = models.ForeignKey(Inventory, models.CASCADE, 'inventory_waybill')
-    waybill = models.ForeignKey(Waybill, models.CASCADE, 'inventory_waybill')
-    stock = models.ForeignKey(Stock, models.CASCADE, 'inventory_waybill')
+    inventory = models.ForeignKey(Inventory, models.CASCADE, 'inventory_waybill_stock')
+    waybill = models.ForeignKey(Waybill, models.CASCADE, 'inventory_waybill_stock')
+    stock = models.ForeignKey(Stock, models.CASCADE, 'inventory_waybill_stock')
     inventory_number = models.PositiveIntegerField()

@@ -29,11 +29,14 @@
                     <div class="col-md-4 mb-3">
                         <label class="form-check-label">{{ i }}</label>
                     </div>
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-1 mb-3">
                         <input type="number" class="form-control" id="id_inventory_{{ i.id }}" name="inventory_{{ i.id }}" placeholder="Number" value=0 required>
     <!--                        <div class="invalid-feedback">-->
     <!--                            Please provide a valid zip.-->
     <!--                        </div>-->
+                    </div>
+                    <div class="col-md-1 mb-3">
+                        <input type="number" class="form-control" value={{ numbers[i.id] }} readonly>
                     </div>
                 </div>
             {% endfor %}
