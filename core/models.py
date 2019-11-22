@@ -35,4 +35,4 @@ class InventoryWaybillStock(models.Model):
     inventory = models.ForeignKey(Inventory, models.CASCADE, 'inventory_waybill_stock')
     waybill = models.ForeignKey(Waybill, models.CASCADE, 'inventory_waybill_stock')
     stock = models.ForeignKey(Stock, models.CASCADE, 'inventory_waybill_stock')
-    inventory_number = models.PositiveIntegerField()
+    inventory_number = models.IntegerField()

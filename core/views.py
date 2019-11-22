@@ -2,6 +2,7 @@ from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
+from django.db.models import Sum
 
 import re
 
@@ -44,10 +45,7 @@ class CreateWaybillView(CreateView):
         context = super().get_context_data()
         context['title'] = 'create waybill'
         context['header'] = "Create Waybill"
-        context['inventories'] = Inventory.objects.all()
-        for item in context['inventories']:
-            queryset = InventoryWaybillStock.objects.filter(stock__id=self.kwargs['pk'], inventory__id=item.id).values_list('number',                                                                                                   'waybill__incoming')
-            context['numbers'][item.id] = sum([x if y else -x for x, y in queryset])
+        context['inventories'] = Inventory.objects.all().annotate(number=Sum('inventory_waybill_stock__number'))
         return context
 
     def post(self, request, *args, **kwargs):
@@ -61,10 +59,11 @@ class CreateWaybillView(CreateView):
         else:
             return self.form_invalid(waybill_form)
         for key, value in request.POST.items():
-            if re.match(r'inventory_\d+', key):
+            if re.match(r'inventory_\d+$', key):
                 inventory = get_object_or_404(Inventory, int(re.compile(r'\d+$').search(key).group(0)))
                 if int(value):
-                    InventoryWaybillStock.objects.create(inventory=inventory, waybill=waybill, store=stock, number=value)
+                    InventoryWaybillStock.objects.create(inventory=inventory, waybill=waybill, store=stock,
+                                                         number=value if value > 0 else -value)
             else:
                 return self.form_invalid(waybill_form)
         return self.form_valid(waybill_form)
