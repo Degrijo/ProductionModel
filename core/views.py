@@ -45,9 +45,9 @@ class CreateWaybillView(CreateView):
         context['title'] = 'create waybill'
         context['header'] = "Create Waybill"
         context['inventories'] = Inventory.objects.all()
-        print(self.kwargs['pk'])
-        print(Inventory.objects.first().number(1))
-        context['numbers'] = {item.id: item.number(self.kwargs['pk']) for item in context['inventories']}
+        for item in context['inventories']:
+            queryset = InventoryWaybillStock.objects.filter(stock__id=self.kwargs['pk'], inventory__id=item.id).values_list('number',                                                                                                   'waybill__incoming')
+            context['numbers'][item.id] = sum([x if y else -x for x, y in queryset])
         return context
 
     def post(self, request, *args, **kwargs):

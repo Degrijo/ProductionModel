@@ -13,10 +13,6 @@ class Inventory(models.Model):
     def __str__(self):
         return self.name + ' ' + dict(self.TYPE_CHOICES)[self.type]
 
-    def number(self, stock_id):
-        queryset = InventoryWaybillStock.objects.filter(stock__id=stock_id, inventory__id=self.id).values_list('number', 'waybill__incoming')
-        return sum([x if y else -x for x, y in queryset])
-
 
 class Stock(models.Model):
     name = models.CharField(max_length=120)
