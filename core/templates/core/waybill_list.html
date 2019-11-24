@@ -1,0 +1,20 @@
+{% extends 'core/wrapper.html' %}
+
+{% block content %}
+    <ul>
+        {% if object_list|length == 0 %}Empty Set{% endif %}
+        {% for obj in object_list %}
+            <li>
+                <div class="form-row">
+                    <div class="col-md-8 mb-3 align-self-center">
+                        {{ obj }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-warning mt-3" onclick="window.location.href='/core/update_waybill/{{ obj.id }}'">Update</button>
+                        <button type="button" class="btn btn-danger mt-3" onclick="window.location.href='/core/delete_waybill/{{ obj.id }}'">Delete</button>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

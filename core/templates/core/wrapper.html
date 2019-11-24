@@ -45,10 +45,24 @@
     <div class="container-fluid header">
         <h5 class="header-name">{{ header }}</h5>
     </div>
-    <div class="container-fluid back col-8 pb-5 pt-4 mt-5">
-        <div class="container-fluid col-10 align-self-center">
-            {% block content %}
-            {% endblock %}
+    <div class="container-fluid">
+        <div class="row">
+            {% if request.resolver_match.url_name == 'stock_inventories_list' %}
+                <div class="container-fluid back col-1 pt-1 mt-5">
+                    {% block filter %}
+                    {% endblock %}
+                </div>
+                <div class="container-fluid col-1"></div>
+            {% else %}
+                <div class="container-fluid col-2"></div>
+            {% endif %}
+            <div class="container-fluid back col-8 pt-4 mt-5">
+                <div class="container-fluid col-10">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+            <div class="container-fluid col-2"></div>
         </div>
     </div>
     <div class="footer fixed-bottom row-fluid mt-5 pt-3">

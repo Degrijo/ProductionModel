@@ -5,38 +5,36 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="id_employee_name">Employee name</label>
-            <input type="text" class="form-control" id="id_employee_name" name="employee_name" placeholder="Enter employee name" maxlength=200>
+            <input type="text" class="form-control" id="id_employee_name" name="employee_name" placeholder="Enter employee name" maxlength=200 required>
 <!--            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
         </div>
         <div class="form-group">
             <label for="id_employee_position">Employee position</label>
-            <input type="text" class="form-control" id="id_employee_position" name="employee_position" placeholder="Enter employee position" maxlength=50>
+            <input type="text" class="form-control" id="id_employee_position" name="employee_position" placeholder="Enter employee position" maxlength=50 required>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="incoming" id="exampleRadios1" value=true checked>
-          <label class="form-check-label" for="exampleRadios1">
+          <input class="form-check-input" type="radio" name="incoming" id="id_incoming" checked value="True">
+          <label class="form-check-label" for="id_incoming">
             Incoming
           </label>
         </div>
         <div class="form-check mb-3">
-          <input class="form-check-input" type="radio" name="incoming" id="exampleRadios2" value=false>
-          <label class="form-check-label" for="exampleRadios2">
+          <input class="form-check-input" id="id_outcoming" name="incoming" type="radio" value="False">
+          <label class="form-check-label" for="id_outcoming">
             Outcoming
           </label>
         </div>
-            {% for i in inventories %}
+            {% for obj in inventories %}
                 <div class="form-row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-check-label">{{ i }}</label>
+                    <div class="col-md-4 mb-3 align-self-center">
+                        <label class="form-check-label">{{ obj.name }}</label>
                     </div>
                     <div class="col-md-1 mb-3">
-                        <input type="number" class="form-control" id="id_inventory_{{ i.id }}" name="inventory_{{ i.id }}" placeholder="Number" value=0 required>
-    <!--                        <div class="invalid-feedback">-->
-    <!--                            Please provide a valid zip.-->
-    <!--                        </div>-->
+                        <input type="number" class="form-control" id="id_inventory_{{ obj.id }}" name="inventory_{{ obj.id }}"
+                               placeholder="Number" value=0 required>
                     </div>
                     <div class="col-md-1 mb-3">
-                        <input type="number" class="form-control" value={{ i.number }} readonly>
+                        <input type="number" class="form-control" value={{ obj.number }} disabled>
                     </div>
                 </div>
             {% endfor %}

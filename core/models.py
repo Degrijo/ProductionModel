@@ -8,14 +8,14 @@ class Inventory(models.Model):
     OTHER = 'OT'
     TYPE_CHOICES = [(WORK_CLOTHES, 'work clothes'), (TOOL, 'tools'), (AUXILIARY_MEANS, 'auxiliary means'), (OTHER, 'other')]
     type = models.CharField(max_length=2, choices=TYPE_CHOICES, default=OTHER)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, default="")
 
     def __str__(self):
-        return self.name + ' ' + dict(self.TYPE_CHOICES)[self.type]
+        return f'{self.name} [{dict(self.TYPE_CHOICES)[self.type]}]'
 
 
 class Stock(models.Model):
-    name = models.CharField(max_length=120)
+    name = models.CharField(max_length=120, default="")
     phone_number = models.CharField(max_length=15)
     inventories = models.ManyToManyField(Inventory, 'stocks', through='InventoryWaybillStock')
 
@@ -29,6 +29,9 @@ class Waybill(models.Model):
     employee_position = models.CharField(max_length=50)
     incoming = models.BooleanField(blank=False, null=False)
     inventories = models.ManyToManyField(Inventory, 'waybills', through='InventoryWaybillStock')
+
+    def __str__(self):
+        return f'Waybill №{self.id}'
 
 
 class InventoryWaybillStock(models.Model):

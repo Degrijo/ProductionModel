@@ -1,0 +1,32 @@
+{% extends 'core/wrapper.html' %}
+
+{% block content %}
+    <ul>
+        {% if object_list|length == 0 %}Empty Set{% endif %}
+        {% for obj in object_list %}
+            <li>
+                <div class="form-row">
+                    <div class="col-md-8 pb-3 align-self-center">
+                        {{ obj }}
+                    </div>
+                    <div class="col-md-4 pb-2">
+                        <div class="col-md-5">
+                            <input type="number" class="form-control" value={{ obj.number }} disabled>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block filter %}
+    Types:
+    {% for key, name in types %}
+        <div class="custom-control custom-checkbox mb-2">
+            <input type="radio" class="form-check-input" name="type" id="{{ key }}_id" value="{{ key }}"
+            onclick="window.location+='{{key}}';">
+            <label class="form-check-label" for="{{ key }}_id">{{ name }}</label>
+        </div>
+    {% endfor %}
+{% endblock %}
