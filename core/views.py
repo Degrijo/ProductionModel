@@ -45,33 +45,41 @@ class CreateWaybillView(CreateView):
         context = super().get_context_data()
         context['title'] = 'create waybill'
         context['header'] = "Create Waybill"
-        context['inventories'] = Inventory.objects.\
-            annotate(number=Case(
-                number=Sum('inventory_waybill_stock__inventory_number'),
-                default=Value(0),
-                output_field=IntegerField()))
+        context['inventories'] = Inventory.objects.all().annotate(
+            number=Sum('inventory_waybill_stock__inventory_number'))
         return context
 
     def post(self, request, *args, **kwargs):
         waybill_data = {}
+        inventories = {}
+        incoming = request.POST['incoming']
         check = False
+        stock_id = self.kwargs['pk']
         for key, value in request.POST.items():
-            if key in ['employee_name', 'employee_position', 'incoming']:
+            if key in ['employee_name', 'employee_position']:
                 waybill_data[key] = value
-            elif re.match(r'inventory_\d+$', key) and value != 0:
+            elif key == 'incoming':
+                waybill_data[key] = True if value == 'True' else False
+            elif re.match(r'inventory_\d+$', key) and int(value) != 0:
+                inv_id = int(re.compile(r'\d+$').search(key).group(0))
+                if incoming == 'False' and \
+                        int(value) > InventoryWaybillStock.objects.filter(inventory_id=inv_id,
+                                                                          stock_id=stock_id). \
+                        aggregate(number=Sum('inventory_number'))['number']:
+                    return self.form_invalid(self.get_form_class()())
+                inventories[inv_id] = int(value)
                 check = True
         waybill_form = self.get_form_class()(waybill_data)
         if not waybill_form.is_valid() or not check:
             return self.form_invalid(waybill_form)
         waybill = waybill_form.save()
-        for key, value in request.POST.items():
-            if re.match(r'inventory_\d+$', key):
-                inventory = get_object_or_404(Inventory, id=int(re.compile(r'\d+$').search(key).group(0)))
-                value = int(value)
-                stock = get_object_or_404(Stock, id=self.kwargs['pk'])
-                InventoryWaybillStock.objects.create(inventory=inventory, waybill=waybill, stock=stock,
-                                                     inventory_number=value if value > 0 else -value)
+        for key, value in inventories.items():
+            InventoryWaybillStock.objects.create(inventory_id=key, waybill=waybill, stock_id=stock_id,
+                                                 inventory_number=value if incoming == 'True' else -value)
         return self.form_valid(waybill_form)
+
+    def form_invalid(self, form):
+        super().form_invalid()
 
 
 class InventoryListView(ListView):
@@ -164,7 +172,7 @@ class StockInventoriesListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset().filter(stocks__id=self.kwargs['pk'])
-        if self.kwargs['filter'] != 'ALL':
+        if self.kwargs['filter'] != 'all':
             queryset = queryset.filter(type=self.kwargs['filter'])
         return queryset.annotate(number=Sum('inventory_waybill_stock__inventory_number'))
 
