@@ -10,8 +10,8 @@
                         {{ obj }}
                     </div>
                     <div class="col-md-8 mb-3">
-                        <button type="button" class="btn btn-primary mt-3" onclick="window.location.href='/core/stock_{{ obj.id }}/inventories'">Inventories</button>
-                        <button type="button" class="btn btn-primary mt-3" onclick="window.location.href='/core/stock_{{ obj.id }}/waybills'">Add Waybill</button>
+                        <button type="button" class="btn btn-primary mt-3" onclick="window.location.href='/core/stock_{{ obj.id }}/inventories/all'">Inventories</button>
+                        <button type="button" class="btn btn-primary mt-3" onclick="window.location.href='/core/stock_{{ obj.id }}/create_waybill/True'">Add Waybill</button>
                         <button type="button" class="btn btn-warning mt-3" onclick="window.location.href='/core/update_stock/{{ obj.id }}'">Update {{ submit }}</button>
                         <button type="button" class="btn btn-danger mt-3" onclick="window.location.href='/core/delete_stock/{{ obj.id }}'">Delete {{ submit }}</button>
                     </div>

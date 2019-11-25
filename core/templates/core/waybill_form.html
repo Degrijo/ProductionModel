@@ -13,13 +13,17 @@
             <input type="text" class="form-control" id="id_employee_position" name="employee_position" placeholder="Enter employee position" maxlength=50 required>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="incoming" id="id_incoming" checked value="True">
+          <input class="form-check-input" type="radio" name="incoming" id="id_incoming" value="True"
+          onclick="window.location='/core/stock_{{ request.resolver_match.kwargs.pk }}/create_waybill/True';"
+          {% if request.resolver_match.kwargs.incoming == 'True' %}checked{% endif %}>
           <label class="form-check-label" for="id_incoming">
             Incoming
           </label>
         </div>
         <div class="form-check mb-3">
-          <input class="form-check-input" id="id_outcoming" name="incoming" type="radio" value="False">
+          <input class="form-check-input" id="id_outcoming" name="incoming" type="radio" value="False"
+          onclick="window.location='/core/stock_{{ request.resolver_match.kwargs.pk }}/create_waybill/False';"
+          {% if request.resolver_match.kwargs.incoming == 'False' %}checked{% endif %}>
           <label class="form-check-label" for="id_outcoming">
             Outcoming
           </label>
@@ -31,18 +35,14 @@
                     </div>
                     <div class="col-md-1 mb-3">
                         <input type="number" class="form-control" id="id_inventory_{{ obj.id }}" name="inventory_{{ obj.id }}"
-                               placeholder="Number" value=0 required>
+                               placeholder="Number" value=0 min=0 {% if request.resolver_match.kwargs.incoming == 'False' %}max={{ obj.number }}{% endif %} required>
                     </div>
                     <div class="col-md-1 mb-3">
-                        <input type="number" class="form-control" value={{ obj.number }} disabled>
+                        <input type="number" class="form-control" id="id_max_inventory_{{ obj.id }}"
+                               name="max_inventory_{{ obj.id }}" value={{ obj.number }} placeholder="Number" readonly>
                     </div>
                 </div>
             {% endfor %}
-        <button type="submit" class="btn btn-success mt-3">Create Waybill</button>
+        <button type="submit" class="btn btn-success mt-3 mb-3">Create Waybill</button>
     </form>
 {% endblock %}
-
-    inventories = models.ManyToManyField(Inventory, 'waybills', through='InventoryWaybill')
-    employee_name = models.CharField(max_length=200)
-    employee_position = models.CharField(max_length=50)
-    incoming

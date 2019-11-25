@@ -2,7 +2,7 @@ from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
-from django.db.models import Sum, Value, Case, IntegerField
+from django.db.models import Sum, Value, Case, IntegerField, F
 
 import re
 
@@ -45,29 +45,32 @@ class CreateWaybillView(CreateView):
         context = super().get_context_data()
         context['title'] = 'create waybill'
         context['header'] = "Create Waybill"
-        context['inventories'] = Inventory.objects.all().annotate(number=Case(number=Sum('inventory_waybill_stock__inventory_number'),
-                                                                       default=Value(0),
-                                                                       output_field=IntegerField()))
+        context['inventories'] = Inventory.objects.\
+            annotate(number=Case(
+                number=Sum('inventory_waybill_stock__inventory_number'),
+                default=Value(0),
+                output_field=IntegerField()))
         return context
 
     def post(self, request, *args, **kwargs):
-        waybill_data = {key: value for key, value in request.POST.items() if key in ['employee_name',
-                                                                                     'employee_position',
-                                                                                     'incoming']}
+        waybill_data = {}
+        check = False
+        for key, value in request.POST.items():
+            if key in ['employee_name', 'employee_position', 'incoming']:
+                waybill_data[key] = value
+            elif re.match(r'inventory_\d+$', key) and value != 0:
+                check = True
         waybill_form = self.get_form_class()(waybill_data)
-        if not waybill_form.is_valid():
+        if not waybill_form.is_valid() or not check:
             return self.form_invalid(waybill_form)
         waybill = waybill_form.save()
         for key, value in request.POST.items():
             if re.match(r'inventory_\d+$', key):
                 inventory = get_object_or_404(Inventory, id=int(re.compile(r'\d+$').search(key).group(0)))
-                if value.isdigit() and int(value) >= 0:
-                    value = int(value)
-                    stock = get_object_or_404(Stock, id=self.kwargs['pk'])
-                    InventoryWaybillStock.objects.create(inventory=inventory, waybill=waybill, stock=stock,
-                                                         inventory_number=value if value > 0 else -value)
-                else:
-                    return self.form_invalid(waybill_form)
+                value = int(value)
+                stock = get_object_or_404(Stock, id=self.kwargs['pk'])
+                InventoryWaybillStock.objects.create(inventory=inventory, waybill=waybill, stock=stock,
+                                                     inventory_number=value if value > 0 else -value)
         return self.form_valid(waybill_form)
 
 
@@ -86,7 +89,7 @@ class InventoryListView(ListView):
 
 class WaybillListView(ListView):
     template_name = 'core/waybill_list.html'
-    model = Waybill
+    queryset = Waybill.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
