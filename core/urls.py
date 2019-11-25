@@ -18,6 +18,6 @@ urlpatterns = [
     path(r'delete_inventory/<int:pk>', delete_inventory, name='delete_inventory'),
     path(r'delete_stock/<int:pk>', delete_stock, name='delete_stock'),
     path(r'delete_waybill/<int:pk>', delete_waybill, name='delete_waybill'),
-    path(r'stock_<int:pk>/inventories/(?P<filter>\D+)/', StockInventoriesListView.as_view(), name='stock_inventories_list'),
+    path(r'stock_<int:pk>/inventories/<str:filter>', StockInventoriesListView.as_view(), name='stock_inventories_list'),
     path(r'stock_<int:pk>/waybills', CreateWaybillView.as_view(), name='create_waybill'),
 ]

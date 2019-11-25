@@ -161,7 +161,7 @@ class StockInventoriesListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset().filter(stocks__id=self.kwargs['pk'])
-        if self.kwargs['filter'] != 'all':
+        if self.kwargs['filter'] != 'ALL':
             queryset = queryset.filter(type=self.kwargs['filter'])
         return queryset.annotate(number=Sum('inventory_waybill_stock__inventory_number'))
 

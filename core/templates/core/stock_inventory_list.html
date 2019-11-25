@@ -22,10 +22,17 @@
 
 {% block filter %}
     Types:
+    <div class="custom-control custom-checkbox mb-2">
+            <input type="radio" class="form-check-input" name="type" id="ALL_id" value="ALL"
+            onclick="window.location='/core/stock_{{ request.resolver_match.kwargs.pk }}/inventories/ALL';"
+            {% if request.resolver_match.kwargs.filter == 'ALL' %}checked{% endif %}>
+            <label class="form-check-label" for="all_id">all</label>
+        </div>
     {% for key, name in types %}
         <div class="custom-control custom-checkbox mb-2">
             <input type="radio" class="form-check-input" name="type" id="{{ key }}_id" value="{{ key }}"
-            onclick="window.location+='{{key}}';">
+            onclick="window.location='/core/stock_{{ request.resolver_match.kwargs.pk }}/inventories/{{key}}';"
+            {% if request.resolver_match.kwargs.filter == key %}checked{% endif %}>
             <label class="form-check-label" for="{{ key }}_id">{{ name }}</label>
         </div>
     {% endfor %}
