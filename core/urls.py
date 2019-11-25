@@ -2,8 +2,8 @@ from django.urls import path, re_path
 import re
 
 from core.views import CreateStockView, CreateInventoryView, CreateWaybillView, InventoryListView, WaybillListView, \
-    StockListView, UpdateStockView, UpdateInventoryView, UpdateWaybillView, StockInventoriesListView, delete_stock, \
-    delete_inventory, delete_waybill
+    StockListView, UpdateStockView, UpdateInventoryView, UpdateWaybillView, StockInventoriesListView, InventoryDetailView, \
+    delete_stock, delete_inventory, delete_waybill
 
 
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
     path(r'create_inventory/', CreateInventoryView.as_view(), name='create_inventory'),
     path(r'stock_list/', StockListView.as_view(), name='stock_list'),
     path(r'inventory_list/', InventoryListView.as_view(), name='inventory_list'),
+    path(r'inventory/<int:pk>', InventoryDetailView.as_view(), name='inventory_detail'),
     path(r'waybill_list/', WaybillListView.as_view(), name='waybill_list'),
     path(r'update_stock/<int:pk>', UpdateStockView.as_view(), name='update_stock'),
     path(r'update_inventory/<int:pk>', UpdateInventoryView.as_view(), name='update_inventory'),

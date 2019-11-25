@@ -1,8 +1,9 @@
-from django.views.generic.edit import CreateView, UpdateView, FormView
+from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
-from django.db.models import Sum, Value, Case, IntegerField, F
+from django.db.models import Sum
 
 import re
 
@@ -79,7 +80,7 @@ class CreateWaybillView(CreateView):
         return self.form_valid(waybill_form)
 
     def form_invalid(self, form):
-        super().form_invalid()
+        return redirect(reverse_lazy('create_waybill', kwargs={'pk': self.kwargs['pk']}))
 
 
 class InventoryListView(ListView):
@@ -90,8 +91,6 @@ class InventoryListView(ListView):
         context = super().get_context_data()
         context['title'] = 'inventory list'
         context['header'] = "Inventory List"
-        context['delete_url'] = reverse_lazy('delete_inventory')
-        context['update_url'] = reverse_lazy('update_inventory')
         return context
 
 
@@ -103,8 +102,6 @@ class WaybillListView(ListView):
         context = super().get_context_data()
         context['title'] = 'Waybill List'
         context['header'] = "Waybill List"
-        context['delete_url'] = reverse_lazy('delete_waybill')
-        context['update_url'] = reverse_lazy('update_waybill')
         return context
 
 
@@ -116,8 +113,6 @@ class StockListView(ListView):
         context = super().get_context_data()
         context['title'] = 'stock list'
         context['header'] = "Stock List"
-        context['delete_url'] = reverse_lazy('delete_stock')
-        context['update_url'] = reverse_lazy('update_stock')
         return context
 
     class Meta:
@@ -134,7 +129,6 @@ class UpdateStockView(UpdateView):
         context = super().get_context_data()
         context['title'] = 'update stock'
         context['header'] = "Update Stock"
-        context['delete_url'] = reverse_lazy('delete_stock')
         return context
 
 
@@ -148,21 +142,19 @@ class UpdateInventoryView(UpdateView):
         context = super().get_context_data()
         context['title'] = 'update inventory'
         context['header'] = "Update Inventory"
-        context['delete_url'] = reverse_lazy('delete_stock')
         return context
 
 
 class UpdateWaybillView(UpdateView):
-    template_name = 'core/waybill_form.html'
+    template_name = 'core/update_waybill_form.html'
     success_url = reverse_lazy('waybill_list')
     model = Waybill
-    exclude = ('created_at',)
+    fields = ('employee_name', 'employee_position')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['title'] = 'update waybill'
         context['header'] = "Update Waybill"
-        context['delete_url'] = reverse_lazy('delete_stock')
         return context
 
 
@@ -180,9 +172,20 @@ class StockInventoriesListView(ListView):
         context = super().get_context_data()
         context['title'] = 'inventory list'
         context['header'] = "Inventory List"
-        context['delete_url'] = reverse_lazy('delete_inventory')
-        context['update_url'] = reverse_lazy('update_inventory')
         context['types'] = Inventory.TYPE_CHOICES
+        return context
+
+
+class InventoryDetailView(DetailView):
+    template_name = 'core/inventory_detail.html'
+    model = Inventory
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['title'] = 'inventory detail'
+        context['header'] = "Inventory Detail"
+        context['waybills'] = self.get_object().inventory_waybill_stock.values('waybill__created_at', 'inventory_number',
+                                                                               'waybill__id')
         return context
 
 

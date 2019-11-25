@@ -1,0 +1,12 @@
+{% extends 'core/wrapper.html' %}
+
+{% block content %}
+    History of {{ object }}:
+    <ul>
+        {% for obj in waybills %}
+            <li>
+                Waybill №{{ obj.waybill__id }} {{ obj.waybill__created_at }} {{ obj.inventory_number }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

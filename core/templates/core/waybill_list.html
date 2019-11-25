@@ -7,10 +7,7 @@
             <li>
                 <div class="form-row">
                     <div class="col-md-8 mb-3 align-self-center">
-                        {{ obj }}
-                        {% for inventory in obj.inventories.objects %}
-                            {{ inventory }}
-                        {% endfor %}
+                        {{ obj }} | {{ obj.created_at }}
                     </div>
                     <div class="col-md-4 mb-3">
                         <button type="button" class="btn btn-warning mt-3" onclick="window.location.href='/core/update_waybill/{{ obj.id }}'">Update</button>
