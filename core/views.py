@@ -3,7 +3,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
-from django.db.models import Sum
+from django.db.models import Sum, Q
+from django.db.models.functions import Coalesce
 
 import re
 
@@ -47,7 +48,7 @@ class CreateWaybillView(CreateView):
         context['title'] = 'create waybill'
         context['header'] = "Create Waybill"
         context['inventories'] = Inventory.objects.all().annotate(
-            number=Sum('inventory_waybill_stock__inventory_number'))
+            number=Coalesce(Sum('inventory_waybill_stock__inventory_number', filter=Q(stocks__id=self.kwargs['pk'])), 0))
         return context
 
     def post(self, request, *args, **kwargs):
@@ -64,9 +65,7 @@ class CreateWaybillView(CreateView):
             elif re.match(r'inventory_\d+$', key) and int(value) != 0:
                 inv_id = int(re.compile(r'\d+$').search(key).group(0))
                 if incoming == 'False' and \
-                        int(value) > InventoryWaybillStock.objects.filter(inventory_id=inv_id,
-                                                                          stock_id=stock_id). \
-                        aggregate(number=Sum('inventory_number'))['number']:
+                        int(value) > int(request.POST['max_' + key]):
                     return self.form_invalid(self.get_form_class()())
                 inventories[inv_id] = int(value)
                 check = True
